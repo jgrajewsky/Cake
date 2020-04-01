@@ -22,7 +22,7 @@ import cake.engine.*;
 		var c = new Entity("Camera");
 		c.addComponent(Transform);
 		camera = cast c.addComponent(Camera);
-		for (_ in 0...100000) {
+		for (_ in 0...10000) {
 			var mesh = new Entity("Mesh");
 			var tttt = cast mesh.addComponent(Transform);
 			tttt.position = new Vector3(Math.random() * 2000.0 - 1000.0, Math.random() * 2000.0 - 1000.0, Math.random() * 2000.0 - 1000.0);
@@ -33,6 +33,46 @@ import cake.engine.*;
 		}
 
 		@:privateAccess Input.start();
+	}
+
+	public override function onKeyDown(key:KeyCode, modifier:KeyModifier):Void {
+		@:privateAccess Input.keyUpdate(key, true);
+	}
+
+	public override function onKeyUp(key:KeyCode, modifier:KeyModifier):Void {
+		@:privateAccess Input.keyUpdate(key, false);
+	}
+
+	public override function onMouseDown(x:Float, y:Float, button:MouseButton) {
+		switch button {
+			case LEFT:
+				@:privateAccess Input.setKey(MOUSE_0, true);
+			case MIDDLE:
+				@:privateAccess Input.setKey(MOUSE_2, true);
+			case RIGHT:
+				@:privateAccess Input.setKey(MOUSE_1, true);
+		}
+		window.cursor = MOVE;
+	}
+
+	public override function onMouseUp(x:Float, y:Float, button:MouseButton) {
+		switch button {
+			case LEFT:
+				@:privateAccess Input.setKey(MOUSE_0, false);
+			case MIDDLE:
+				@:privateAccess Input.setKey(MOUSE_2, false);
+			case RIGHT:
+				@:privateAccess Input.setKey(MOUSE_1, false);
+		}
+		window.cursor = ARROW;
+	}
+
+	public override function onMouseMove(x:Float, y:Float) {
+		Input.mousePosition.set(x, y);
+	}
+
+	public override function onMouseMoveRelative(x:Float, y:Float) {
+		Input.mouseDelta.set(x, y);
 	}
 
 	public override function onWindowCreate() {
@@ -124,46 +164,6 @@ import cake.engine.*;
 		preloader.onComplete.add(function() {
 			shader = new Shader("Assets/vert.glsl", "Assets/frag.glsl");
 		});
-	}
-
-	public override function onKeyDown(key:KeyCode, modifier:KeyModifier):Void {
-		@:privateAccess Input.keyUpdate(key, true);
-	}
-
-	public override function onKeyUp(key:KeyCode, modifier:KeyModifier):Void {
-		@:privateAccess Input.keyUpdate(key, false);
-	}
-
-	public override function onMouseDown(x:Float, y:Float, button:MouseButton) {
-		switch button {
-			case LEFT:
-				@:privateAccess Input.setKey(MOUSE_0, true);
-			case MIDDLE:
-				@:privateAccess Input.setKey(MOUSE_2, true);
-			case RIGHT:
-				@:privateAccess Input.setKey(MOUSE_1, true);
-		}
-		window.cursor = MOVE;
-	}
-
-	public override function onMouseUp(x:Float, y:Float, button:MouseButton) {
-		switch button {
-			case LEFT:
-				@:privateAccess Input.setKey(MOUSE_0, false);
-			case MIDDLE:
-				@:privateAccess Input.setKey(MOUSE_2, false);
-			case RIGHT:
-				@:privateAccess Input.setKey(MOUSE_1, false);
-		}
-		window.cursor = ARROW;
-	}
-
-	public override function onMouseMove(x:Float, y:Float) {
-		Input.mousePosition.set(x, y);
-	}
-
-	public override function onMouseMoveRelative(x:Float, y:Float) {
-		Input.mouseDelta.set(x, y);
 	}
 
 	public override function onWindowResize(width:Int, height:Int) {

@@ -51,10 +51,10 @@ class Camera extends Component {
 			renderer.entity.transform.rebuildMatrix(false);
 			temp.copy(viewProj);
 			temp *= renderer.entity.transform.matrix;
-			// for(i in 0...16) {
-			// 	f32a[i] = temp[i];
-			// }
-			Main.gl.uniformMatrix4fv(location, false, new Float32Array(temp));
+			for(i in 0...16) {
+				f32a[i] = temp[i];
+			}
+			Main.gl.uniformMatrix4fv(location, false, f32a);
 			Main.gl.drawArrays(Main.gl.TRIANGLES, 0, 96);
 		}
 	}
@@ -91,7 +91,7 @@ class Camera extends Component {
 			entity.transform.position += entity.transform.up * speed;
 		}
 		if (Input.keyHeld(MOUSE_0)) {
-			entity.transform.rotation -= new Vector3(Input.mouseDelta.y, Input.mouseDelta.x, 0.0) * Time.deltaTime * 10.0;
+			entity.transform.rotation -= new Vector3(Input.mouseDelta.y, Input.mouseDelta.x, 0.0) * 0.1;
 		}
 	}
 
