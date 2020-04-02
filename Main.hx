@@ -1,3 +1,4 @@
+import lime.ui.Touch;
 import lime.ui.MouseButton;
 import lime.app.Application;
 import lime.graphics.*;
@@ -27,19 +28,24 @@ import cake.engine.*;
 			var tttt = cast mesh.addComponent(Transform);
 			tttt.position = new Vector3(Math.random() * 2000.0 - 1000.0, Math.random() * 2000.0 - 1000.0, Math.random() * 2000.0 - 1000.0);
 			tttt.rotation = new Vector3(Math.random() * 360.0, Math.random() * 360.0, Math.random() * 360.0);
-			tttt.scale = Vector3.one() * 0.2;
+			tttt.scale = new Vector3(-0.2, -0.2, -0.2);
 			var aa = mesh.addComponent(MeshRenderer);
 			aa.onCreate();
 		}
+		// var mesh = new Entity("Mesh");
+		// var tttt = cast mesh.addComponent(Transform);
+		// tttt.position = Vector3.forward() * 1000.0;
+		// var aa = mesh.addComponent(MeshRenderer);
+		// aa.onCreate();
 
 		@:privateAccess Input.start();
 	}
 
-	public override function onKeyDown(key:KeyCode, modifier:KeyModifier):Void {
+	public override function onKeyDown(key:KeyCode, modifier:KeyModifier) {
 		@:privateAccess Input.keyUpdate(key, true);
 	}
 
-	public override function onKeyUp(key:KeyCode, modifier:KeyModifier):Void {
+	public override function onKeyUp(key:KeyCode, modifier:KeyModifier) {
 		@:privateAccess Input.keyUpdate(key, false);
 	}
 
@@ -73,6 +79,18 @@ import cake.engine.*;
 
 	public override function onMouseMoveRelative(x:Float, y:Float) {
 		Input.mouseDelta.set(x, y);
+	}
+
+	public override function onTouchStart(touch:Touch) {
+		@:privateAccess Input.setKey(MOUSE_0, true);
+	}
+
+	public override function onTouchMove(touch:Touch) {
+		Input.mouseDelta.set(touch.dx, touch.dy);
+	}
+
+	public override function onTouchEnd(touch:Touch) {
+		@:privateAccess Input.setKey(MOUSE_0, false);
 	}
 
 	public override function onWindowCreate() {
@@ -180,12 +198,13 @@ import cake.engine.*;
 		Input.mouseDelta.set(0.0, 0.0);
 	}
 
-	public override function render(context:RenderContext):Void {
+	public override function render(context:RenderContext) {
 		gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
 		gl.enableVertexAttribArray(0);
 
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 		gl.enable(gl.CULL_FACE);
+		// gl.cullFace(gl.FRONT);
 		gl.enable(gl.DEPTH_TEST);
 
 		if (shader != null && shader.program != null) {

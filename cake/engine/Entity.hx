@@ -1,12 +1,20 @@
 package cake.engine;
 
 class Entity {
+	/** The name of the entity. **/
 	public var name:String;
-	public var parent:Entity;
-	public var transform(default, null):Transform;
-	public var children:Array<Entity>;
 
-	private var components:Array<Component>;
+	/** The parent of the entity. **/
+	public var parent:Entity;
+
+	/** Transform attached to this entity. **/
+	public var transform(default, null):Transform;
+
+	/** All entities attached to this entity. **/
+	public var children(default, null):Array<Entity>;
+
+	/** All components attached to this entity. **/
+	private var components(default, null):Array<Component>;
 
 	public function new(name:String) {
 		this.name = name;
@@ -27,6 +35,7 @@ class Entity {
 		return component;
 	}
 
+	/** Returns first component of Type `type` in the Entity. **/
 	public function getComponent(type:Class<Component>):Component {
 		for (component in components) {
 			if (Type.getClass(component) == type) {
@@ -36,6 +45,7 @@ class Entity {
 		return null;
 	}
 
+	/** Returns all components of Type `type` in the Entity. **/
 	public function getComponents(type:Class<Component>):Array<Component> {
 		var found = [];
 		for (component in components) {
@@ -46,6 +56,10 @@ class Entity {
 		return found.length > 0 ? found : null;
 	}
 
+	/** 
+		Removes first component of Type `type` from the Entity.
+		@returns `false` if no component was removed.
+	**/
 	public function removeComponent(type:Class<Component>):Bool {
 		for (i in 0...components.length) {
 			if (Type.getClass(components[i]) == type) {
@@ -59,6 +73,10 @@ class Entity {
 		return false;
 	}
 
+	/** 
+		Removes all components of Type `type` from the Entity.
+		@returns How many components were removed.
+	**/
 	public function removeComponents(type:Class<Component>):Int {
 		var count = 0, i = 0;
 		while (i < components.length) {
@@ -74,6 +92,7 @@ class Entity {
 		return count;
 	}
 
+	/** Removes all components from the Entity. **/
 	public function removeAllComponents():Void {
 		components = [];
 	}
