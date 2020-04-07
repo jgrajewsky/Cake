@@ -1,6 +1,9 @@
 package cake.engine;
 
 class Screen {
-    public static var width:Int;
-    public static var height:Int;
+	/** The current width of the window in pixels. **/
+	public static var width:Int;
+
+	/** The current height of the window in pixels. **/
+	public static var height:Int;
 }

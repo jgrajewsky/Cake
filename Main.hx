@@ -28,15 +28,10 @@ import cake.engine.*;
 			var tttt = cast mesh.addComponent(Transform);
 			tttt.position = new Vector3(Math.random() * 2000.0 - 1000.0, Math.random() * 2000.0 - 1000.0, Math.random() * 2000.0 - 1000.0);
 			tttt.rotation = new Vector3(Math.random() * 360.0, Math.random() * 360.0, Math.random() * 360.0);
-			tttt.scale = new Vector3(-0.2, -0.2, -0.2);
+			tttt.scale = Vector3.one() * 0.2;
 			var aa = mesh.addComponent(MeshRenderer);
 			aa.onCreate();
 		}
-		// var mesh = new Entity("Mesh");
-		// var tttt = cast mesh.addComponent(Transform);
-		// tttt.position = Vector3.forward() * 1000.0;
-		// var aa = mesh.addComponent(MeshRenderer);
-		// aa.onCreate();
 
 		@:privateAccess Input.start();
 	}
@@ -204,7 +199,6 @@ import cake.engine.*;
 
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 		gl.enable(gl.CULL_FACE);
-		// gl.cullFace(gl.FRONT);
 		gl.enable(gl.DEPTH_TEST);
 
 		if (shader != null && shader.program != null) {
