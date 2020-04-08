@@ -24,7 +24,7 @@ class Entity {
 	}
 
 	public function addComponent(type:Class<Component>):Component {
-		var component = Type.createInstance(type, null);
+		var component = Type.createInstance(type, []);
 		component.entity = this;
 		if (transform == null && type == Transform) {
 			transform = cast component;

@@ -12,33 +12,32 @@ class Camera extends Component {
 	public var zFar:Float = 5000.0;
 
 	private var matrix:Matrix4x4 = new Matrix4x4();
-
-	// private var floatArray:Float32Array = new Float32Array(new Matrix4x4());
+	private var floatArray:Float32Array = new Float32Array(new Matrix4x4());
 	// #region functions
 
 	public override function onUpdate() {
 		var speed = Time.deltaTime * 100.0;
 		if (Input.keyHeld(W)) {
-			entity.transform.position -= entity.transform.forward * speed;
+			entity.transform.localPosition -= entity.transform.forward * speed;
 		}
 		if (Input.keyHeld(S)) {
-			entity.transform.position += entity.transform.forward * speed;
+			entity.transform.localPosition += entity.transform.forward * speed;
 		}
 		if (Input.keyHeld(A)) {
-			entity.transform.position -= entity.transform.right * speed;
+			entity.transform.localPosition -= entity.transform.right * speed;
 		}
 		if (Input.keyHeld(D)) {
-			entity.transform.position += entity.transform.right * speed;
+			entity.transform.localPosition += entity.transform.right * speed;
 		}
 		if (Input.keyHeld(LEFT_SHIFT)) {
-			entity.transform.position -= entity.transform.up * speed;
+			entity.transform.localPosition -= entity.transform.up * speed;
 		}
 		if (Input.keyHeld(SPACE)) {
-			entity.transform.position += entity.transform.up * speed;
+			entity.transform.localPosition += entity.transform.up * speed;
 		}
 		if (Input.keyHeld(MOUSE_0)) {
-			entity.transform.rotation.x = Math.fclamp(entity.transform.rotation.x - Input.mouseDelta.y * 0.05, -90.0, 90.0);
-			entity.transform.rotation.y -= Input.mouseDelta.x * 0.05;
+			entity.transform.localRotation.x = Math.fclamp(entity.transform.localRotation.x - Input.mouseDelta.y * 0.05, -90.0, 90.0);
+			entity.transform.localRotation.y -= Input.mouseDelta.x * 0.05;
 		}
 	}
 
@@ -48,37 +47,33 @@ class Camera extends Component {
 		@:privateAccess matrix *= entity.transform.matrix;
 		var location = Main.gl.getUniformLocation(Main.shader.program, "u_matrix");
 		var render = new Matrix4x4();
-		var f32a = new Float32Array(new Matrix4x4());
 		@:privateAccess
 		for (renderer in MeshRenderer.all) {
-			renderer.entity.transform.rotation += Time.deltaTime * 5.0;
+			renderer.entity.transform.localRotation += Time.deltaTime * 5.0;
 
 			renderer.entity.transform.rebuildMatrix(false);
 			render.copy(matrix);
 			render *= renderer.entity.transform.matrix;
-			for (i in 0...16) {
-				f32a[i] = render[i];
-			}
-			// floatArray[0] = render[0];
-			// floatArray[1] = render[1];
-			// floatArray[2] = render[2];
-			// floatArray[3] = render[3];
-			// floatArray[4] = render[4];
-			// floatArray[5] = render[5];
-			// floatArray[6] = render[6];
-			// floatArray[7] = render[7];
-			// floatArray[8] = render[8];
-			// floatArray[9] = render[9];
-			// floatArray[10] = render[10];
-			// floatArray[11] = render[11];
-			// floatArray[12] = render[12];
-			// floatArray[13] = render[13];
-			// floatArray[14] = render[14];
-			// floatArray[15] = render[15];
-			Main.gl.uniformMatrix4fv(location, false, f32a);
-			var x = renderer.entity.transform.scale.x >= 0.0,
-				y = renderer.entity.transform.scale.y >= 0.0,
-				z = renderer.entity.transform.scale.z >= 0.0;
+			floatArray[0] = render[0];
+			floatArray[1] = render[1];
+			floatArray[2] = render[2];
+			floatArray[3] = render[3];
+			floatArray[4] = render[4];
+			floatArray[5] = render[5];
+			floatArray[6] = render[6];
+			floatArray[7] = render[7];
+			floatArray[8] = render[8];
+			floatArray[9] = render[9];
+			floatArray[10] = render[10];
+			floatArray[11] = render[11];
+			floatArray[12] = render[12];
+			floatArray[13] = render[13];
+			floatArray[14] = render[14];
+			floatArray[15] = render[15];
+			Main.gl.uniformMatrix4fv(location, false, floatArray);
+			var x = renderer.entity.transform.localScale.x >= 0.0,
+				y = renderer.entity.transform.localScale.y >= 0.0,
+				z = renderer.entity.transform.localScale.z >= 0.0;
 			Main.gl.cullFace((x && y && z) || (!x && y && z) || (x && !y && z) || (x && y && !z) ? Main.gl.BACK : Main.gl.FRONT);
 			Main.gl.drawArrays(Main.gl.TRIANGLES, 0, 96);
 		}
@@ -87,21 +82,13 @@ class Camera extends Component {
 	private function rebuildMatrix():Void {
 		var ratio = Screen.width / Screen.height;
 		if (perspective) {
-			// var tan = Math.tan(fieldOfView * Math.DEG_2_RAD / 2.0);
-			// matrix[0] = 1.0 / (ratio * tan);
-			// matrix[15] = matrix[13] = matrix[12] = matrix[9] = matrix[8] = matrix[7] = matrix[6] = matrix[4] = matrix[3] = matrix[2] = matrix[1] = 0.0;
-			// matrix[5] = 1.0 / tan;
-			// matrix[10] = -(zFar + zNear) / (zFar - zNear);
-			// matrix[11] = -1.0;
-			// matrix[14] = -(2.0 * zFar * zNear) / (zFar - zNear);
-			var f = Math.tan(Math.PI * 0.5 - 0.5 * fieldOfView * Math.DEG_2_RAD);
-			var rangeInv = 1.0 / (zNear - zFar);
-			matrix[0] = f / (Screen.width / Screen.height);
+			var tan = Math.tan(fieldOfView * Math.DEG_2_RAD / 2.0);
+			matrix[0] = 1.0 / (ratio * tan);
 			matrix[15] = matrix[13] = matrix[12] = matrix[9] = matrix[8] = matrix[7] = matrix[6] = matrix[4] = matrix[3] = matrix[2] = matrix[1] = 0.0;
-			matrix[5] = f;
-			matrix[10] = (zNear + zFar) * rangeInv;
+			matrix[5] = 1.0 / tan;
+			matrix[10] = -(zFar + zNear) / (zFar - zNear);
 			matrix[11] = -1.0;
-			matrix[14] = zNear * zFar * rangeInv * 2.0;
+			matrix[14] = -(2.0 * zFar * zNear) / (zFar - zNear);
 		} else {
 			matrix[0] = 1.0 / (size * ratio);
 			matrix[13] = matrix[12] = matrix[11] = matrix[9] = matrix[8] = matrix[7] = matrix[6] = matrix[4] = matrix[3] = matrix[2] = matrix[1] = 0.0;

@@ -24,11 +24,11 @@ import cake.engine.*;
 		c.addComponent(Transform);
 		camera = cast c.addComponent(Camera);
 		for (_ in 0...10000) {
-			var mesh = new Entity("Mesh");
+			var mesh = new Entity("Mesh" + Math.random());
 			var tttt = cast mesh.addComponent(Transform);
-			tttt.position = new Vector3(Math.random() * 2000.0 - 1000.0, Math.random() * 2000.0 - 1000.0, Math.random() * 2000.0 - 1000.0);
-			tttt.rotation = new Vector3(Math.random() * 360.0, Math.random() * 360.0, Math.random() * 360.0);
-			tttt.scale = Vector3.one() * 0.2;
+			tttt.localPosition = new Vector3(Math.random() * 2000.0 - 1000.0, Math.random() * 2000.0 - 1000.0, Math.random() * 2000.0 - 1000.0);
+			tttt.localRotation = new Vector3(Math.random() * 360.0, Math.random() * 360.0, Math.random() * 360.0);
+			tttt.localScale = Vector3.one() * 0.2;
 			var aa = mesh.addComponent(MeshRenderer);
 			aa.onCreate();
 		}

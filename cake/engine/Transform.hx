@@ -10,14 +10,14 @@ class Transform extends Component {
 	/** The local scale of the Transform. **/
 	public var localScale:Vector3 = Vector3.one();
 
-	/** The world position of the transform. **/
-	public var position(get, null):Vector3;
+	// /** The world position of the transform. **/
+	// public var position(get, null):Vector3;
 
-	/** The world rotation of the transform. **/
-	public var rotation(get, null):Vector3;
+	// /** The world rotation of the transform. **/
+	// public var rotation(get, null):Vector3;
 
-	/** The world scale of the transform. **/
-	public var scale(get, null):Vector3;
+	// /** The world scale of the transform. **/
+	// public var scale(get, null):Vector3;
 
 	/** The world right direction of the transform. **/
 	public var localRight(get, null):Vector3;
@@ -72,15 +72,15 @@ class Transform extends Component {
 	}
 
 	private inline function get_right():Vector3 {
-		return rotate(rotation, 1.0, 0.0, 0.0);
+		return rotate(localRotation, 1.0, 0.0, 0.0);
 	}
 
 	private inline function get_up():Vector3 {
-		return rotate(rotation, 0.0, 1.0, 0.0);
+		return rotate(localRotation, 0.0, 1.0, 0.0);
 	}
 
 	private inline function get_forward():Vector3 {
-		return rotate(rotation, 0.0, 0.0, 1.0);
+		return rotate(localRotation, 0.0, 0.0, 1.0);
 	}
 
 	private inline function get_localRight():Vector3 {
@@ -133,18 +133,18 @@ class Transform extends Component {
 
 	private function rebuildMatrix(inverse:Bool) {
 		@:privateAccess
-		if (position.hasChanged || rotation.hasChanged || scale.hasChanged) {
+		if (localPosition.hasChanged || localRotation.hasChanged || localScale.hasChanged) {
 			matrix[11] = matrix[9] = matrix[8] = matrix[7] = matrix[6] = matrix[4] = matrix[3] = matrix[2] = matrix[1] = 0.0;
 			matrix[15] = matrix[10] = matrix[5] = matrix[0] = 1.0;
-			matrix[12] = position.x;
-			matrix[13] = position.y;
-			matrix[14] = position.z;
+			matrix[12] = localPosition.x;
+			matrix[13] = localPosition.y;
+			matrix[14] = localPosition.z;
 
 			var other = new Matrix4x4();
 			var rad, cos, sin;
 
-			if (rotation.y != 0.0) {
-				rad = rotation.y * Math.DEG_2_RAD;
+			if (localRotation.y != 0.0) {
+				rad = localRotation.y * Math.DEG_2_RAD;
 				cos = Math.cos(rad);
 				sin = Math.sin(rad);
 				other[10] = other[0] = cos;
@@ -155,8 +155,8 @@ class Transform extends Component {
 				matrix *= other;
 			}
 
-			if (rotation.x != 0.0) {
-				rad = rotation.x * Math.DEG_2_RAD;
+			if (localRotation.x != 0.0) {
+				rad = localRotation.x * Math.DEG_2_RAD;
 				cos = Math.cos(rad);
 				sin = Math.sin(rad);
 				other[14] = other[13] = other[12] = other[11] = other[8] = other[7] = other[4] = other[3] = other[2] = other[1] = 0.0;
@@ -167,8 +167,8 @@ class Transform extends Component {
 				matrix *= other;
 			}
 
-			if (rotation.z != 0.0) {
-				rad = rotation.z * Math.DEG_2_RAD;
+			if (localRotation.z != 0.0) {
+				rad = localRotation.z * Math.DEG_2_RAD;
 				cos = Math.cos(rad);
 				sin = Math.sin(rad);
 				other[5] = other[0] = cos;
@@ -179,11 +179,11 @@ class Transform extends Component {
 				matrix *= other;
 			}
 
-			if (scale.x != 1.0 || scale.y != 1.0 || scale.z != 1.0) {
-				other[0] = scale.x;
+			if (localScale.x != 1.0 || localScale.y != 1.0 || localScale.z != 1.0) {
+				other[0] = localScale.x;
 				other[14] = other[13] = other[12] = other[11] = other[9] = other[8] = other[7] = other[6] = other[4] = other[3] = other[2] = other[1] = 0.0;
-				other[5] = scale.y;
-				other[10] = scale.z;
+				other[5] = localScale.y;
+				other[10] = localScale.z;
 				other[15] = 1.0;
 				matrix *= other;
 			}
@@ -192,7 +192,7 @@ class Transform extends Component {
 				matrix.inverse();
 			}
 
-			position.hasChanged = rotation.hasChanged = scale.hasChanged = false;
+			localPosition.hasChanged = localRotation.hasChanged = localScale.hasChanged = false;
 		}
 	}
 
