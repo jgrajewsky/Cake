@@ -1,5 +1,5 @@
-let project = new Project('Empty');
+let project = new Project('Cake');
 
-project.addSources('cake');
+project.addSources('source');
 
 resolve(project);
