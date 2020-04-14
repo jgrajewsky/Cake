@@ -22,7 +22,6 @@ class Time {
 	// #region functions
 
 	private static inline function update(delta:Float) {
-		delta /= 1000.0;
 		deltaTime = delta * timeScale;
 		unscaledDeltaTime = delta;
 		time += deltaTime;
