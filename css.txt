@@ -1,0 +1,50 @@
+display
+
+visibility
+
+anchor (anchor-x, anchor-y)
+
+size (width, height)
+    min-size (min-width, min-height)
+    max-size (max-width, max-height)
+
+margin (margin-top, margin-right, margin-bottom, margin-left)
+
+padding (padding-top, padding-right, padding-bottom, padding-left)
+
+overflow (overflow-x, overflow-y)
+
+opacity
+
+outline (outline-width, outline-style, outline-color)
+
+border (border-width, border-style, border-color)
+    border-top (border-top-width, border-top-style, border-top-color)
+    border-right (border-right-width, border-right-style, border-right-color)
+    border-bottom (border-bottom-width, border-bottom-style, border-bottom-color)
+    border-left (border-left-width, border-left-style, border-left-color)
+    border-radius (border-top-right-radius, border-bottom-right-radius, border-bottom-left-radius, border-top-left-radius)
+    border-padding (border-top-padding, border-right-padding, border-bottom-padding, border-left-padding)
+    border-image (border-image-source, border-image-slice, border-image-size, border-image-repeat, border-image-fill)
+
+bg/background (bg-color, bg-anchor)
+    bg-image (bg-image-source, bg-image-slice, bg-image-size, bg-image-repeat, border-image-fill)
+    bg-anchor (bg-anchor-x, bg-anchor-y)
+    bg-size (bg-width, bg-height)
+    bg-angle
+    bg-origin
+    bg-clip
+    bg-sticky
+
+shadow (shadow-offset, shadow-color, shadow-blur, shadow-spread)
+        shadow-offset (shadow-offset-x, shadow-offset-y)
+
+cursor
+
+transition
+
+@media
+
+@keyframes
+
+anim/animation (anim-name, anim-duration, anim-timing-function, anim-loop-count, anim-direction, anim-reset, anim-state)

@@ -4,7 +4,7 @@ class Component {
 	/** Entity this component is attached to. **/
 	public var entity:Entity;
 
-	public function new() {}
+	private final function new() {}
 
 	/** This function is called when the component is created. **/
 	public function onCreate():Void {}
