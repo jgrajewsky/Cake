@@ -1,5 +1,6 @@
 package cake.engine;
 
+@:allow(Main)
 class RectTransform extends Component {
 	public var size:Vector2 = new Vector2(100.0, 200.0);
 	public var position:Vector2 = Vector2.zero();

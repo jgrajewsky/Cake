@@ -1,6 +1,7 @@
 package cake.engine;
 
-class Time {
+@:allow(Main)
+final class Time {
 	/** The scale at which time passes. Default is `1.0`**/
 	public static var timeScale:Float = 1.0;
 
@@ -19,15 +20,11 @@ class Time {
 	/** The total number of frames that have passed. (Read Only) **/
 	public static var frameCount(default, null):Int = 0;
 
-	// #region functions
-
-	private static inline function update(delta:Float) {
+	private static inline function update(delta:Float):Void {
 		deltaTime = delta * timeScale;
 		unscaledDeltaTime = delta;
 		time += deltaTime;
 		unscaledTime += unscaledDeltaTime;
 		++frameCount;
 	}
-
-	// #endregion
 }

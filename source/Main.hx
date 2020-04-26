@@ -1,6 +1,4 @@
-import kha.math.FastMatrix3;
 import kha.graphics4.BlendingFactor;
-import kha.graphics4.BlendingOperation;
 import kha.graphics4.ConstantLocation;
 import kha.graphics4.IndexBuffer;
 import kha.Shaders;
@@ -20,7 +18,7 @@ import js.Browser.document;
 import js.Browser.window;
 #end
 
-class Main {
+final class Main {
 	static var vertices:Array<Float> = [
 		-0.5, -0.5, 0.0,
 		 0.5, -0.5, 0.0,
@@ -78,10 +76,14 @@ class Main {
 
 			window.notifyOnResize(Main.onResize);
 
-			var e = new Entity("Hello");
-			rectTransform = cast e.addComponent(RectTransform);
-
+			// var e = new Entity("Hello");
+			// rectTransform = cast e.addComponent(RectTransform);
+			// var canvas:Canvas;
+			
 			Assets.loadEverything(function() {
+				// canvas = cast e.addComponent(Canvas);
+				// canvas.loadDocument(Assets.blobs.window_cml.readUtf8String());
+				
 				System.notifyOnFrames(function(framebuffers) {
 					render(framebuffers[0]);
 				});
@@ -96,23 +98,23 @@ class Main {
 
 	public static function render(framebuffer:Framebuffer) {
 		// update
-		@:privateAccess Time.update(System.time - Time.time);
-		@:privateAccess Input.update();
+		Time.update(System.time - Time.time);
+		Input.update();
 
 		// render
 		var graphics = framebuffer.g4;
 		graphics.begin();
 		graphics.clear(Color.fromFloats(0.2, 0.3, 0.3, 1.0));
 
-		graphics.setPipeline(pipeline);
+		// graphics.setPipeline(pipeline);
 		// rectTransform.position = (new Vector2(Screen.width, Screen.height) - rectTransform.size) / 2.0;
-		rectTransform.rotation += 1.0;
+		// rectTransform.rotation += 1.0;
 		// rectTransform.scale = Vector2.one() * Math.pingPong(Time.time, 1.0, 2.0);
-		@:privateAccess graphics.setMatrix3(matrix, rectTransform.rebuildMatrix(new Matrix3()));
-		@:privateAccess graphics.setFloat2(size, rectTransform.size.x, rectTransform.size.y);
-		graphics.setVertexBuffer(vertexBuffer);
-		graphics.setIndexBuffer(indexBuffer);
-		graphics.drawIndexedVertices();
+		// graphics.setMatrix3(matrix, rectTransform.rebuildMatrix(new Matrix3()));
+		// graphics.setFloat2(size, rectTransform.size.x, rectTransform.size.y);
+		// graphics.setVertexBuffer(vertexBuffer);
+		// graphics.setIndexBuffer(indexBuffer);
+		// graphics.drawIndexedVertices();
 
 		graphics.end();
 	}

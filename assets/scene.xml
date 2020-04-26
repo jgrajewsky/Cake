@@ -1,0 +1,16 @@
+<e n="test">
+    <c t="Transform">
+        <f t="Vector3">1.0 1.0 1.0</f>
+    </c>
+    <c t="Canvas">
+        <f n="Position" t="Vector2">3214352.0 -5.123213</f>
+    </c>
+    <c t="MeshRenderer"></c>
+    <e n="foobar"></e>
+</e>
+<e n="aaa"><c t="Transform"></c></e>
+<e n="bbb"></e>
+<e n="ccc">
+    <c t="c"></c>
+    <c t="c"></c>
+</e>

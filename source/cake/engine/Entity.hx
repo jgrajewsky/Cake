@@ -1,6 +1,6 @@
 package cake.engine;
 
-class Entity {
+final class Entity {
 	/** The name of the entity. **/
 	public var name:String;
 
@@ -16,6 +16,7 @@ class Entity {
 	/** All components attached to this entity. **/
 	private var components(default, null):Array<Component>;
 
+	/** Creates a new Entity and adds it to the current Scene**/
 	public function new(name:String) {
 		this.name = name;
 		parent = null;
@@ -23,6 +24,7 @@ class Entity {
 		components = [];
 	}
 
+	/** Attaches a component of Type `type` to the Entity. **/
 	public function addComponent(type:Class<Component>):Component {
 		var component = Type.createInstance(type, []);
 		component.entity = this;
@@ -35,7 +37,7 @@ class Entity {
 		return component;
 	}
 
-	/** Returns first component of Type `type` in the Entity. **/
+	/** Returns first component of Type `type` attached to the Entity. **/
 	public function getComponent(type:Class<Component>):Component {
 		for (component in components) {
 			if (Type.getClass(component) == type) {
@@ -45,7 +47,7 @@ class Entity {
 		return null;
 	}
 
-	/** Returns all components of Type `type` in the Entity. **/
+	/** Returns all components of Type `type` attached to the Entity. **/
 	public function getComponents(type:Class<Component>):Array<Component> {
 		var found = [];
 		for (component in components) {
@@ -58,7 +60,7 @@ class Entity {
 
 	/** 
 		Removes first component of Type `type` from the Entity.
-		@returns `false` if no component was removed.
+		@return `false` if no component was removed.
 	**/
 	public function removeComponent(type:Class<Component>):Bool {
 		for (i in 0...components.length) {
