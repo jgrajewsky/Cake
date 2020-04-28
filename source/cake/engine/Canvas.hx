@@ -1,8 +1,8 @@
-// package cake.engine;
+package cake.engine;
 
 // import haxe.ds.GenericStack;
 
-// class Canvas extends Component {
+class Canvas extends Component {
 // 	private var elements:Array<Element>;
 
 // 	public function loadDocument(data:String) {
@@ -86,4 +86,4 @@
 // 	public function getElements(query:String):Array<Element> {
 // 		return null;
 // 	}
-// }
+}

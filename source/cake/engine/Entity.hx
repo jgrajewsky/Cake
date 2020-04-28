@@ -1,39 +1,46 @@
 package cake.engine;
 
+@:allow(Main)
 final class Entity {
 	/** The name of the entity. **/
 	public var name:String;
 
 	/** The parent of the entity. **/
-	public var parent:Entity;
+	public var parent(default, set):Entity;
 
-	/** Transform attached to this entity. **/
-	public var transform(default, null):Transform;
+	/** All entities attached to this entity. (Read only) **/
+	public var children(default, null):ReadOnlyArray<Entity>;
 
-	/** All entities attached to this entity. **/
-	public var children(default, null):Array<Entity>;
+	/** All components attached to this entity. (Read only) **/
+	private var components(default, null):ReadOnlyArray<Component>;
 
-	/** All components attached to this entity. **/
-	private var components(default, null):Array<Component>;
-
-	/** Creates a new Entity and adds it to the current Scene**/
-	public function new(name:String) {
+	private function new(name:String) {
 		this.name = name;
-		parent = null;
 		children = [];
 		components = [];
 	}
+
+	// #region properties
+
+	private function set_parent(parent:Entity):Entity {
+		if (this.parent != null) {
+			@:privateAccess this.parent.children.remove(this);
+		}
+		if (parent != null) {
+			@:privateAccess parent.children.push(this);
+		}
+		this.parent = parent;
+		return parent;
+	}
+
+	// #endregion
+	// #region functions
 
 	/** Attaches a component of Type `type` to the Entity. **/
 	public function addComponent(type:Class<Component>):Component {
 		var component = Type.createInstance(type, []);
 		component.entity = this;
-		if (transform == null && type == Transform) {
-			transform = cast component;
-			components.unshift(component);
-		} else {
-			components.push(component);
-		}
+		@:privateAccess components.push(component);
 		return component;
 	}
 
@@ -65,10 +72,7 @@ final class Entity {
 	public function removeComponent(type:Class<Component>):Bool {
 		for (i in 0...components.length) {
 			if (Type.getClass(components[i]) == type) {
-				if (i == 0) {
-					transform = null;
-				}
-				components.splice(i, 1);
+				@:privateAccess components.splice(i, 1);
 				return true;
 			}
 		}
@@ -83,10 +87,7 @@ final class Entity {
 		var count = 0, i = 0;
 		while (i < components.length) {
 			if (Type.getClass(components[i]) == type) {
-				if (i == 0) {
-					transform = null;
-				}
-				components.splice(i--, 1);
+				@:privateAccess components.splice(i--, 1);
 				++count;
 			}
 			++i;
@@ -99,7 +100,10 @@ final class Entity {
 		components = [];
 	}
 
-	private final function onCreate():Void {
+	// #endregion
+	// #region events
+
+	private function onCreate():Void {
 		for (component in components) {
 			component.onCreate();
 		}
@@ -108,7 +112,7 @@ final class Entity {
 		}
 	}
 
-	private final function onUpdate():Void {
+	private function onUpdate():Void {
 		for (component in components) {
 			component.onUpdate();
 		}
@@ -117,7 +121,7 @@ final class Entity {
 		}
 	}
 
-	private final function onDestroy():Void {
+	private function onDestroy():Void {
 		for (component in components) {
 			component.onDestroy();
 		}
@@ -125,4 +129,6 @@ final class Entity {
 			child.onDestroy();
 		}
 	}
+
+	// #endregion
 }

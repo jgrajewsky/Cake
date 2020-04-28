@@ -18,6 +18,7 @@ import js.Browser.document;
 import js.Browser.window;
 #end
 
+@:build(IncludeMacro.build())
 final class Main {
 	static var vertices:Array<Float> = [
 		-0.5, -0.5, 0.0,
@@ -76,14 +77,9 @@ final class Main {
 
 			window.notifyOnResize(Main.onResize);
 
-			// var e = new Entity("Hello");
-			// rectTransform = cast e.addComponent(RectTransform);
-			// var canvas:Canvas;
-			
 			Assets.loadEverything(function() {
-				// canvas = cast e.addComponent(Canvas);
-				// canvas.loadDocument(Assets.blobs.window_cml.readUtf8String());
-				
+				Scene.currentScene = new Scene(Assets.blobs.scene_xml.readUtf8String());
+
 				System.notifyOnFrames(function(framebuffers) {
 					render(framebuffers[0]);
 				});
@@ -118,4 +114,5 @@ final class Main {
 
 		graphics.end();
 	}
+
 }

@@ -1,4 +1,4 @@
-// package cake.engine;
+package cake.engine;
 
 // import haxe.ds.StringMap;
 
@@ -13,7 +13,7 @@
 // // blur()
 // // onFocus
 // // focus()
-// final class Element extends Component {
+class Element extends Component {
 // 	public var tag:String;
 // 	public var text:String;
 // 	public var classes:Array<String>;
@@ -33,4 +33,4 @@
 // 	public function getChildren(query:String):Array<Element> {
 // 		return null;
 // 	}
-// }
+}

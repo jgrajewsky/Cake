@@ -1,77 +1,63 @@
 package cake.engine;
 
-import haxe.ds.GenericStack;
-
 @:allow(Main)
 final class Scene {
 	public static var currentScene:Scene;
 
-	public var entities:Array<Entity>;
+	/** All root level entities in this Scene. (Read Only) **/
+	public var entities(default, null):ReadOnlyArray<Entity> = [];
 
 	private function new(data:String) {
-		var entityStack:GenericStack<Entity> = new GenericStack<Entity>();
-		var currentText = "";
+		var currentEntity:Entity = null;
+		var currentComponent:Component = null;
+		var currentText:Null<String> = null;
 		var i = 0;
 		while (i < data.length) {
 			var char = data.charAt(i);
 			switch char {
-				case ">":
-					if (!textOnly && currentText != "") {
-						var entity = parseEntity(currentText);
-						var parent = entityStack.first();
-						if (parent != null) {
-							parent.children.push(entity);
-						} else {
-							entities.push(entity);
-						}
-						entityStack.add(entity);
-						currentText = "";
-					} else {
-						throw 'Unexpected ">"';
-					}
 				case "<":
-					if (textOnly) {
-						if (currentText != "") {
-							entityStack.first().children.push(new Entity(""));
-						}
-						textOnly = false;
-					} else {
-						throw 'Unexpected "<"';
+					if (currentText == null) {
+						currentText = "";
 					}
 				case "/":
-					if (!textOnly) {
-						var entity = entityStack.pop();
-						if (entity != null && data.substr(i + 1, entity.tag.length) == entity.tag) {
-							i += entity.tag.length + 1;
-						} else {
-							throw 'Unexpected "</"';
+					if (currentText != null) {
+						i += 2;
+						currentText = null;
+					}
+				case ">":
+					if (currentText.length != null) {
+						switch currentText.charAt(0) {
+							case "e":
+								var parent = currentEntity;
+								@:privateAccess currentEntity = new Entity(currentText.substring(5, currentText.length - 1));
+								if (parent == null) {
+									@:privateAccess entities.push(currentEntity);
+								} else {
+									currentEntity.parent = parent;
+								}
+							case "c":
+								if (currentEntity != null) {
+									var type = currentText.substring(5, currentText.length - 1);
+									// trace(Transform);
+									trace(Type.resolveClass("Something"));
+									// currentComponent = Type.createInstance(Type.resolveClass(type), []);
+								}
+							case "f":
+								if (currentComponent != null) {
+									var name = currentText.substring(5, currentText.length - 1);
+									// trace(currentText);
+								}
 						}
-					} else {
+						currentText = null;
+					}
+				case "\n":
+				default:
+					if (currentText != null) {
 						currentText += char;
 					}
-				default:
-					currentText += char;
 			}
 			++i;
 		}
-	}
-
-	private function parseEntity(tag:String):Entity {
-		// var i = 1;
-		// var tag = "";
-		// var hasTag = false;
-		// while (i < tag.length) {
-		// 	var char = tag.charAt(i);
-		// 	if (!hasTag) {
-		// 		if (char != " ") {
-		// 			tag += char;
-		// 		} else {
-		// 			hasTag = true;
-		// 		}
-		// 	}
-		// 	++i;
-		// }
-		return new Entity("");
 	}
 
 	/** Returns a Scene with a specified index. **/
