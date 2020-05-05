@@ -1,5 +1,6 @@
 package cake.engine;
 
+@:allow(Entity)
 class Component {
 	/** Entity this component is attached to. **/
 	public var entity:Entity;

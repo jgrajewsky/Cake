@@ -1,6 +1,8 @@
 package cake.engine;
 
-@:allow(Main)
+import haxe.Constraints;
+
+@:allow(Main, cake.engine)
 final class Entity {
 	/** The name of the entity. **/
 	public var name:String;
@@ -41,6 +43,7 @@ final class Entity {
 		var component = Type.createInstance(type, []);
 		component.entity = this;
 		@:privateAccess components.push(component);
+		component.onCreate();
 		return component;
 	}
 
@@ -102,15 +105,6 @@ final class Entity {
 
 	// #endregion
 	// #region events
-
-	private function onCreate():Void {
-		for (component in components) {
-			component.onCreate();
-		}
-		for (child in children) {
-			child.onCreate();
-		}
-	}
 
 	private function onUpdate():Void {
 		for (component in components) {

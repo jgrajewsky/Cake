@@ -25,7 +25,7 @@ final class Scene {
 						currentText = null;
 					}
 				case ">":
-					if (currentText.length != null) {
+					if (currentText.length != 0) {
 						switch currentText.charAt(0) {
 							case "e":
 								var parent = currentEntity;
@@ -37,15 +37,27 @@ final class Scene {
 								}
 							case "c":
 								if (currentEntity != null) {
-									var type = currentText.substring(5, currentText.length - 1);
-									// trace(Transform);
-									trace(Type.resolveClass("Something"));
-									// currentComponent = Type.createInstance(Type.resolveClass(type), []);
+									var type:Class<Component> = cast Type.resolveClass(currentText.substring(5, currentText.length - 1));
+									currentEntity.addComponent(type);
 								}
 							case "f":
 								if (currentComponent != null) {
-									var name = currentText.substring(5, currentText.length - 1);
-									// trace(currentText);
+									var f = 5;
+									var subText = "";
+									var field = "";
+									while (f < currentText.length - 1) {
+										var char = currentText.charAt(f);
+										if (char == "\"") {
+											f += 4;
+											field = subText;
+											subText = "";
+										} else {
+											subText += char;
+										}
+										++f;
+									}
+									var values = subText.split(" ");
+									Reflect.setField(currentComponent, field, values[0]);
 								}
 						}
 						currentText = null;

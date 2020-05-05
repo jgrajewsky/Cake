@@ -1,16 +1,3 @@
-<e n="test">
-    <c t="cake.engine.Transform">
-        <f n="Position">1.0 1.0 1.0</f>
-    </c>
-    <c t="cake.engine.Canvas">
-        <f n="Position">3214352.0 -5.123213</f>
-    </c>
-    <c t="cake.engine.MeshRenderer"></c>
-    <e n="foobar"></e>
-</e>
-<e n="aaa"><c t="cake.engine.Transform"></c></e>
-<e n="bbb"></e>
-<e n="ccc">
-    <c t="Component"></c>
-    <c t="Component"></c>
+<e n="Test">
+    <c t="cake.engine.Canvas"></c>
 </e>

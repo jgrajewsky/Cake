@@ -1,7 +1,7 @@
 package cake.engine;
 
 @:forward(length, concat, copy, filter, indexOf, iterator, join, lastIndexOf, map, slice, toString)
-abstract ReadOnlyArray<T>(Array<T>) from Array<T> {
+abstract ReadOnlyArray<T>(Array<T>) from Array<T> to Array<T> {
 	@:arrayAccess inline function get(i:Int):T {
 		return this[i];
 	}
