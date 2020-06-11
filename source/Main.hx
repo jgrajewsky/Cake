@@ -1,11 +1,8 @@
-import kha.graphics4.Graphics;
-import kha.input.Keyboard;
-import kha.Color;
 import kha.Assets;
+import kha.Color;
 import kha.Framebuffer;
 import kha.System;
 import cake.engine.*;
-import cake.editor.*;
 #if js
 import js.Browser.document;
 import js.Browser.window;
@@ -14,7 +11,6 @@ import kha.Macros;
 
 final class Main {
 	public static function main() {
-		Keyboard.disableSystemInterventions(None);
 		#if js
 		document.documentElement.setAttribute("style", "height:100%");
 		document.body.setAttribute("style", "margin:0;height:100%");
@@ -31,12 +27,9 @@ final class Main {
 
 			window.notifyOnResize(Main.onResize);
 			Mesh.start();
-			Canvas.start();
 
 			Assets.loadEverything(function() {
-				Scene.currentScene = new Scene(Assets.blobs.scene_xml.readUtf8String());
-				var canvas:Canvas = cast Scene.currentScene.entities[0].getComponent(Canvas);
-				canvas.loadDocument(Assets.blobs.window_xml.readUtf8String());
+				Scene.loadSceneByIndex(0);
 
 				System.notifyOnFrames(function(framebuffers) {
 					render(framebuffers[0]);
@@ -53,8 +46,7 @@ final class Main {
 	public static function render(framebuffer:Framebuffer) {
 		// update
 		Time.update(System.time - Time.time);
-		Input.update();
-		for (entity in Scene.currentScene.entities) {
+		for (entity in Scene.entities) {
 			entity.onUpdate();
 		}
 
@@ -62,9 +54,6 @@ final class Main {
 		var graphics = framebuffer.g4;
 		graphics.begin();
 		graphics.clear(Color.fromFloats(0.2, 0.3, 0.3, 1.0));
-
-		Canvas.renderAll(graphics);
-
 		graphics.end();
 	}
 }

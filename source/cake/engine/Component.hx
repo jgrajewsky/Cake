@@ -5,14 +5,15 @@ class Component {
 	/** Entity this component is attached to. **/
 	public var entity:Entity;
 
-	private final function new() {}
+	public function new() {}
 
-	/** This function is called when the component is created. **/
-	public function onCreate():Void {}
+	/** Attaches the Component to the specified Entity. **/
+	public function attach(to:Entity):Void {
+		to.attachComponent(this);
+	}
 
-	/** This function is called every frame. **/
-	public function onUpdate():Void {}
-
-	/** This function is called when the component is destroyed. **/
-	public function onDestroy():Void {}
+	/** Detaches the Component from the Entity it's attached to. **/
+	public function detach():Void {
+		entity.detachInstance(this);
+	}
 }

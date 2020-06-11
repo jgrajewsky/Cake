@@ -1,83 +1,84 @@
 package cake.engine;
 
+import haxe.macro.Context;
+import haxe.macro.Expr;
+
 @:allow(Main)
 final class Scene {
-	public static var currentScene:Scene;
+	/** Currently loaded Scene. (Read Only) **/
+	public static var currentScene(default, null):Scene;
 
-	/** All root level entities in this Scene. (Read Only) **/
-	public var entities(default, null):ReadOnlyArray<Entity> = [];
+	/** All root level entities from the current loaded Scene. (Read Only) **/
+	public static var entities(default, null):ReadOnlyArray<Entity> = [];
 
-	private function new(data:String) {
-		var currentEntity:Entity = null;
-		var currentComponent:Component = null;
-		var currentText:Null<String> = null;
-		var i = 0;
-		while (i < data.length) {
-			var char = data.charAt(i);
-			switch char {
-				case "<":
-					if (currentText == null) {
-						currentText = "";
-					}
-				case "/":
-					if (currentText != null) {
-						i += 2;
-						currentText = null;
-					}
-				case ">":
-					if (currentText.length != 0) {
-						switch currentText.charAt(0) {
-							case "e":
-								var parent = currentEntity;
-								@:privateAccess currentEntity = new Entity(currentText.substring(5, currentText.length - 1));
-								if (parent == null) {
-									@:privateAccess entities.push(currentEntity);
-								} else {
-									currentEntity.parent = parent;
-								}
-							case "c":
-								if (currentEntity != null) {
-									var type:Class<Component> = cast Type.resolveClass(currentText.substring(5, currentText.length - 1));
-									currentEntity.addComponent(type);
-								}
-							case "f":
-								if (currentComponent != null) {
-									var f = 5;
-									var subText = "";
-									var field = "";
-									while (f < currentText.length - 1) {
-										var char = currentText.charAt(f);
-										if (char == "\"") {
-											f += 4;
-											field = subText;
-											subText = "";
-										} else {
-											subText += char;
-										}
-										++f;
-									}
-									var values = subText.split(" ");
-									Reflect.setField(currentComponent, field, values[0]);
-								}
-						}
-						currentText = null;
-					}
-				case "\n":
-				default:
-					if (currentText != null) {
-						currentText += char;
-					}
-			}
-			++i;
-		}
-	}
-
-	/** Returns a Scene with a specified index. **/
-	public static function getSceneByIndex(index:Int):Scene {
+	/** 
+		Loads a Scene with a specified index.
+		@param additive If `true`, new Scene entities will be added to the old Scene.
+	**/
+	public static function loadSceneByIndex(index:Int, additive:Bool = false):Scene {
+		entities = [];
+		parseScenes();
 		return null;
 	}
 
-	public static function loadScene(scene:Scene):Void {}
+	/** 
+		Loads a Scene with a specified name.
+		@param additive If `true`, new Scene entities will be added to the old Scene.
+	**/
+	public static function loadSceneByName(name:String, additive:Bool = false):Scene {
+		return loadSceneByIndex(0);
+	}
 
-	public static function loadSceneAdditive(scene:Scene):Void {}
+	private static macro function parseScenes():Expr {
+		var scenes = [sys.io.File.getContent(Sys.getCwd() + "../scene.xml")];
+		var expr = "
+			var entity:Entity = null;
+			var parent:Entity = null;
+			switch index {
+		";
+		var currentText:Null<String> = null;
+		var entities = 0;
+		for (i in 0...scenes.length) {
+			expr += 'case ${i}:';
+			var scene = scenes[i];
+			var c = 0;
+			while (c < scene.length) {
+				var char = scene.charAt(c);
+				if (currentText != null) {
+					if (char == ">") {
+						var split = currentText.split(" ");
+						switch currentText.charAt(0) {
+							case "e":
+								var name = split[1].split("\"")[1];
+								if (entities > 0) {
+									expr += "parent = entity;";
+								}
+								expr += 'entity = new Entity("${name}");';
+								if (entities == 0) {
+									expr += "@:privateAccess entities.push(entity);";
+								} else {
+									expr += "entity.parent = parent;";
+								}
+								++entities;
+							case "c":
+								var type = split[1].split("\"")[1];
+								expr += 'var component = new ${type}(); entity.attachComponent(component);';
+							case "/":
+								if (currentText.charAt(1) == "e") {
+									--entities;
+									expr += "entity = entity.parent;";
+								}
+						}
+						currentText = null;
+					} else {
+						currentText += char;
+					}
+				} else if (char == "<") {
+					currentText = "";
+				}
+				++c;
+			}
+		}
+		return Context.parse('{${expr}}}', Context.currentPos());
+	}
 }
