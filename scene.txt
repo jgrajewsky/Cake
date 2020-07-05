@@ -1,3 +1,0 @@
-1. *.scene file is file in XML format containing scene hierarchy and serialized data.
-2. Scene are stored in a project.cake file
-3. When project is compiled Macro parses all scenes into a function (loadSceneByIndex)
