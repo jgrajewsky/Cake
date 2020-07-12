@@ -5,9 +5,9 @@ use std::ops::*;
 /// Representation of 3D vectors and points
 #[derive(Debug, Clone, Copy)]
 pub struct Vector3<T: Copy = f32> {
-    x: T,
-    y: T,
-    z: T,
+    pub x: T,
+    pub y: T,
+    pub z: T,
 }
 
 impl<T: Copy> Vector3<T> {

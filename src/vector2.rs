@@ -5,8 +5,8 @@ use std::ops::*;
 /// Representation of 2D vectors and points
 #[derive(Debug, Clone, Copy)]
 pub struct Vector2<T: Copy = f32> {
-    x: T,
-    y: T,
+    pub x: T,
+    pub y: T,
 }
 
 impl<T: Copy> Vector2<T> {
