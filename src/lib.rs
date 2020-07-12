@@ -147,6 +147,58 @@ pub fn start() {
     });
 }
 
+#[no_mangle]
+extern "C" fn start_editor(
+    window: &winit::window::Window,
+    event_loop: winit::event_loop::EventLoop<()>,
+) {
+    let (instance, mut adapters, surface) = {
+        let instance =
+            back::Instance::create("Cake Test", 1).expect("Failed to create an instance!");
+        let surface = unsafe {
+            instance
+                .create_surface(window)
+                .expect("Failed to create a surface!")
+        };
+        let adapters = instance.enumerate_adapters();
+        (Some(instance), adapters, surface)
+    };
+
+    let adapter = adapters.remove(0);
+
+    let mut renderer = Renderer::new(instance, surface, adapter);
+
+    time::init();
+
+    event_loop.run(move |event, _, control_flow| {
+        time::update();
+        match event {
+            winit::event::Event::WindowEvent { event, .. } => match event {
+                winit::event::WindowEvent::CloseRequested => {
+                    *control_flow = winit::event_loop::ControlFlow::Exit
+                }
+                winit::event::WindowEvent::Resized(dims) => {
+                    #[cfg(all(feature = "gl", not(target_arch = "wasm32")))]
+                    {
+                        let context = renderer.surface.context();
+                        context.resize(dims);
+                    }
+                    renderer.dimensions = Extent2D {
+                        width: dims.width,
+                        height: dims.height,
+                    };
+                    renderer.recreate_swapchain();
+                }
+                _ => {}
+            },
+            winit::event::Event::RedrawEventsCleared => {
+                renderer.render();
+            }
+            _ => {}
+        }
+    });
+}
+
 struct Renderer<B: Backend> {
     dimensions: Extent2D,
     instance: Option<B::Instance>,
