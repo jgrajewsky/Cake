@@ -19,6 +19,8 @@ pub use entity::Component;
 pub use entity::Entity;
 mod system;
 pub use system::System;
+mod scene;
+pub use scene::Scene;
 
 #[cfg(feature = "dx11")]
 extern crate gfx_backend_dx11 as back;
@@ -40,12 +42,6 @@ extern crate gfx_backend_metal as back;
 #[cfg(feature = "vulkan")]
 extern crate gfx_backend_vulkan as back;
 
-#[cfg(target_arch = "wasm32")]
-#[wasm_bindgen(start)]
-pub fn wasm_main() {
-    start();
-}
-
 use gfx_hal::{
     adapter::Adapter,
     device::Device,
@@ -55,7 +51,11 @@ use gfx_hal::{
     Backend, Instance,
 };
 
-use std::mem::ManuallyDrop;
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen(start)]
+pub fn wasm_main() {
+    start();
+}
 
 pub fn start() {
     let wb = winit::window::WindowBuilder::new()
@@ -63,9 +63,7 @@ pub fn start() {
             512, 512,
         )))
         .with_title("Cake Test".to_string());
-
     let event_loop = winit::event_loop::EventLoop::new();
-
     #[cfg(not(feature = "gl"))]
     let (_window, instance, mut adapters, surface) = {
         let window = wb.build(&event_loop).unwrap();
@@ -113,11 +111,8 @@ pub fn start() {
         (window, None, adapters, surface)
     };
     let adapter = adapters.remove(0);
-
     let mut renderer = Renderer::new(instance, surface, adapter);
-
     time::init();
-
     event_loop.run(move |event, _, control_flow| {
         time::update();
         match event {
@@ -147,59 +142,8 @@ pub fn start() {
     });
 }
 
-#[no_mangle]
-extern "C" fn start_editor(
-    window: &winit::window::Window,
-    event_loop: winit::event_loop::EventLoop<()>,
-) {
-    let (instance, mut adapters, surface) = {
-        let instance =
-            back::Instance::create("Cake Test", 1).expect("Failed to create an instance!");
-        let surface = unsafe {
-            instance
-                .create_surface(window)
-                .expect("Failed to create a surface!")
-        };
-        let adapters = instance.enumerate_adapters();
-        (Some(instance), adapters, surface)
-    };
-
-    let adapter = adapters.remove(0);
-
-    let mut renderer = Renderer::new(instance, surface, adapter);
-
-    time::init();
-
-    event_loop.run(move |event, _, control_flow| {
-        time::update();
-        match event {
-            winit::event::Event::WindowEvent { event, .. } => match event {
-                winit::event::WindowEvent::CloseRequested => {
-                    *control_flow = winit::event_loop::ControlFlow::Exit
-                }
-                winit::event::WindowEvent::Resized(dims) => {
-                    #[cfg(all(feature = "gl", not(target_arch = "wasm32")))]
-                    {
-                        let context = renderer.surface.context();
-                        context.resize(dims);
-                    }
-                    renderer.dimensions = Extent2D {
-                        width: dims.width,
-                        height: dims.height,
-                    };
-                    renderer.recreate_swapchain();
-                }
-                _ => {}
-            },
-            winit::event::Event::RedrawEventsCleared => {
-                renderer.render();
-            }
-            _ => {}
-        }
-    });
-}
-
-struct Renderer<B: Backend> {
+use std::mem::ManuallyDrop;
+pub struct Renderer<B: Backend> {
     dimensions: Extent2D,
     instance: Option<B::Instance>,
     surface: ManuallyDrop<B::Surface>,
@@ -227,7 +171,7 @@ impl<B: Backend> Renderer<B> {
             height: 512,
         };
 
-        let (device, mut queue_group) = {
+        let (device, queue_group) = {
             use gfx_hal::queue::QueueFamily;
             let queue_family = adapter
                 .queue_families
@@ -245,7 +189,7 @@ impl<B: Backend> Renderer<B> {
             };
             (gpu.device, gpu.queue_groups.pop().unwrap())
         };
-        let (command_pool, mut command_buffer) = unsafe {
+        let (command_pool, command_buffer) = unsafe {
             use gfx_hal::command::Level;
             use gfx_hal::pool::{CommandPool, CommandPoolCreateFlags};
             let mut command_pool = device
@@ -265,7 +209,6 @@ impl<B: Backend> Renderer<B> {
         });
 
         let swap_config = gfx_hal::window::SwapchainConfig::from_caps(&caps, format, dimensions);
-        let extent = swap_config.extent;
         unsafe {
             surface
                 .configure_swapchain(&device, swap_config)

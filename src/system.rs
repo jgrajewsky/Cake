@@ -1,4 +1,5 @@
 pub trait System {
-    fn on_create() {}
-    fn on_update() {}
+    type Data;
+
+    fn update(&mut self, data: Self::Data);
 }
